@@ -9,7 +9,7 @@
 
 ## Выбранный стек
 
-* Python3.10
+* Python 3.10
 * Flask
 * PostgreSQL
 * API+VueJS
