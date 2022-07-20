@@ -22,3 +22,5 @@
 ## Бэкенд
 
 ## Фронтенд
+
+- [Макет](https://www.figma.com/file/41UzqD8Kr9yOjp3ek8aine/Untitled?node-id=0%3A1)
