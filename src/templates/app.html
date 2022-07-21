@@ -1,0 +1,29 @@
+﻿{% extends 'base.html' %}
+{% block body %}
+<script src="/static/vue3.2.36.js"></script>
+<!-- components -->
+<script src="/static/menu.js"></script>
+<script src="/static/home.js"></script>
+<script src="/static/error.js"></script>
+<script src="/static/city.js"></script>
+
+<div id="app">
+
+	<header>
+		<nav-menu :items="nav_items" @go="change_page"></nav-menu>
+	</header>
+	
+	<main>
+		<component v-if="current_page in nav_items" 
+			:is="current_page"></component>
+		<error v-else></error>
+	</main>
+	
+	<footer>
+	
+	</footer>
+</div>
+
+<!-- main app -->
+<script src="/static/app.js"></script>
+{% endblock %}
