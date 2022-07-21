@@ -1,0 +1,23 @@
+body {
+	transition: .5s all;
+	font-family: monospace
+}
+
+.app {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.app__head, 
+.app__foot, 
+.app__main{
+	display: flex;
+    width: 100%;
+}
+
+.app__head{
+	justify-content: end;
+}
+
