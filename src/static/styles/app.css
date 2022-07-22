@@ -1,13 +1,32 @@
-body {
+.app {
 	transition: .5s all;
-	font-family: monospace
+	font-family: monospace;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	font-size: 14px;
 }
 
-.app {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: center;
+.app__content {
+	height: 100%;
+	display: grid;
+	grid-template-areas: "head"
+	"main"
+	"foot";
+	justify-content: center;
+	align-items: start;
+	width: 100%;
+    grid-template-columns: 1fr;
+}
+
+.app__content > *{
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
 .app__head, 
@@ -15,9 +34,21 @@ body {
 .app__main{
 	display: flex;
     width: 100%;
+	justify-content: center;
 }
+
 
 .app__head{
-	justify-content: end;
+	height: 50px;
+	grid-area: head;
 }
 
+.app__main{
+	height: 100%;
+	grid-area: main;
+}
+
+
+.app__foot{
+	grid-area: foot;
+}

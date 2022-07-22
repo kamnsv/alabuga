@@ -4,29 +4,39 @@
 <!-- components -->
 <script src="/static/scripts/menu.js"></script>
 <script src="/static/scripts/home.js"></script>
+<script src="/static/scripts/auth.js"></script>
 <script src="/static/scripts/error.js"></script>
 <script src="/static/scripts/city.js"></script>
 
-<div id="app" class='app'>
-
-	<header class='app__head'>
-		<nav-menu :items="nav_items" @go="change_page"></nav-menu>
-	</header>
+<div id="app" class='app' >
+	<div class='app__content' :style="style_bg">
 	
-	<main class='app__main'>
-	
-		<home-page v-if="'home' == current_page" v-bind="main"></home-page>
-		<component v-else-if="current_page in nav_items" 
-			:is="current_page"></component>
-		<error v-else></error>
+		<header class='app__head'>
+			<nav-menu :items="nav_items" @go="change_page"></nav-menu>
+			<h1 class='app__title' v-if="title">
+			{% autoescape false %}{{title}}{% endautoescape %}
+			</h1>
+		</header>
 		
-	</main>
-	
-	<footer class='app__foot'>
-	
-	</footer>
-</div>
+		<main class='app__main'>
 
+			<home-page v-if="'home' == current_page" v-bind="main"></home-page>
+			<component v-else-if="current_page in nav_items" 
+				:is="current_page"></component>
+			<error v-else></error>
+			
+		</main>
+		
+		<footer class='app__foot'>
+		
+		</footer>
+	</div>
+</div>
+<script>
+{% if user %}
+const user = '{{user}}';
+{% endif %}	
+</script>
 <!-- main app -->
 <script src="/static/scripts/app.js"></script>
 {% endblock %}

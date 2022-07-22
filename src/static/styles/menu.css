@@ -1,8 +1,15 @@
+.menu {
+	width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+	padding: 0 20px;
+}
+
 .menu__list{
     display: flex;
     list-style: none;
     justify-content: center;
-    width: 100%;
     padding: 0;
     margin: 0;
 }
@@ -11,3 +18,4 @@
 	margin: 0 10px;
 	cursor: pointer
 }
+
