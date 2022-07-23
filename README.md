@@ -13,7 +13,7 @@
 - [Фронтенд](#фронтенд)
 - [Запуск](#Запуск)
 
-Ожидаемое окружение:
+> Ожидаемое окружение
 
 ```
 MAIL_SERVER={smtp}
@@ -25,6 +25,7 @@ MAIL_USERNAME={email}
 MAIL_PASSWORD={token}
 MAIL_DEFAULT_SENDER={email}
 DATABASE_URL=postgresql://{user}:{pwd}@{ip}:{post}/{dbname}
+FLASK_DB_SEEDS_PATH=src/seeds.py 
 FLASK_APP=src/alabuga.py
 ```
 
@@ -39,6 +40,12 @@ FLASK_APP=src/alabuga.py
 flask db init
 flask db migrate
 flask db upgrade
+```
+
+## Seed
+
+```
+flask seed run --root src/seeds
 ```
 
 ## Фронтенд
