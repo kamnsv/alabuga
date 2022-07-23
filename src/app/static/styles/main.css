@@ -11,11 +11,11 @@
 }
 
 .main__inf {
-	grid-area: inf 
+	grid-area: inf;
 }
 
 .main__img {
-	grid-area: img 
+	grid-area: img; 
 }
 .main__src {
 	object-fit: contain;
@@ -24,7 +24,7 @@
 
 .main__works {
 	margin-top: 40px;
-	grid-area: work 
+	grid-area: work;
 }
 .main__stars {
     display: flex;
@@ -46,5 +46,5 @@
 	margin-bottom: 20px;
 }
 .main__work {
-	text-align: center
+	text-align: center;
 }

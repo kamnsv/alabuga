@@ -48,7 +48,10 @@
 	grid-area: main;
 }
 
-
 .app__foot{
 	grid-area: foot;
+}
+
+.app__title{
+	position: absolute;
 }

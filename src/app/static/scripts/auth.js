@@ -52,7 +52,7 @@ const auth = {
 			location.pathname = '/logout/';
 
 		
-	},//mounted
+	},//created
 	
     template:   `<div class='auth' v-if="!user">
 		<div class='auth__put' v-if="!put_code">

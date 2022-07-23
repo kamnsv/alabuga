@@ -45,20 +45,7 @@ const root = {
 		}
 		
 	},//methods
-	
-	created(){
-		//
-		fetch('/api?main')
-	    .then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			this.main = data;
-		});
-		//
 		
-	},//created
-	
 	mounted() {
 		
 		let page = location.pathname.slice(1);
@@ -78,9 +65,10 @@ const root = {
 	
 	components: {
 		'nav-menu': menu,
-		'home-page': home,
-		'error': error,
-		'auth': auth,
+		'home':     home,
+		'error':    error,
+		'auth':     auth,
+		'city':     city
 	},//components
 	watch:{
 		current_page(new_page, old_page){

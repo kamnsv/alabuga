@@ -1,5 +1,3 @@
-start.bat
-start.sh
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -111,6 +109,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+*.bat
+*.sh
 
 # Spyder project settings
 .spyderproject
@@ -129,3 +129,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+migrations/
+env.bat
+env.sh
