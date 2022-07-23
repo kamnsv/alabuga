@@ -1,4 +1,5 @@
 ![](https://img.shields.io/badge/python-3.8.10-blue)
+![](https://img.shields.io/badge/vuejs-3-green)
 
 > SPA созданое входе [тестового практического задания](/task.md)
 
