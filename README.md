@@ -1,5 +1,7 @@
 ![](https://img.shields.io/badge/python-3.8.10-blue)
+![](https://img.shields.io/badge/flask-2.1.3-red)
 ![](https://img.shields.io/badge/vuejs-3-green)
+
 
 > SPA созданое входе [тестового практического задания](/task.md)
 
@@ -25,13 +27,6 @@ MAIL_DEFAULT_SENDER={email}
 DATABASE_URL=postgresql://{user}:{pwd}@{ip}:{post}/{dbname}
 FLASK_APP=src/alabuga.py
 ```
-
-## Выбранный стек
-
-* Python 3.8.10
-* Flask
-* PostgreSQL
-* API+VueJS
 
 ## База данных
 
