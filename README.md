@@ -19,10 +19,8 @@ MAIL_DEBUG={bool}
 MAIL_USERNAME={email}
 MAIL_PASSWORD={token}
 MAIL_DEFAULT_SENDER={email}
-
 DATABASE_URL=postgresql://{user}:{pwd}@{ip}:{post}/{dbname}
-
-FLASK_APP=src/alabuga.py"
+FLASK_APP=src/alabuga.py
 ```
 
 ## Выбранный стек
