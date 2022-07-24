@@ -7,7 +7,8 @@ class SeedModel:
             self[k] = v
         
     def __str__(self):
-        return ', '.join([f'{k}={v}' for k, v in self.data.items()])
+        s = ', '.join([f'{k}={v}' for k, v in self.data.items()])
+        return s
 
 class Works(db.Model, SeedModel):
     id = db.Column(db.Integer, 
@@ -16,7 +17,7 @@ class Works(db.Model, SeedModel):
                      nullable=False, 
                      unique=True)
     
-class Statuses(db.Model):
+class Statuses(db.Model, SeedModel):
     id = db.Column(db.Integer, 
                    primary_key=True)
     status = db.Column(db.String(128), 

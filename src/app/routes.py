@@ -93,7 +93,7 @@ def create_data(col):
         abort(400)
     if not hasattr(models, col): abort(404)
     model = models[col]
-    data = model(request.json)
+    data = model(**request.json)
     db.session.add(data)
     db.session.commit()
     return jsonify(data.to_json()), 201
