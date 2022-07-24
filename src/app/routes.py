@@ -1,4 +1,4 @@
-from flask import jsonify, render_template, session, request, abort
+from flask import jsonify, render_template, session, request, abort, redirect
 from flask_mail import Mail, Message
 import os
 import random
@@ -23,6 +23,7 @@ def send_email(theme, email, txt):
        
 @app.route('/mail/<string:email>')
 def mail_send(email):
+    session.clear()
     session['email'] = email
     session['code'] = random.randrange(1000, 10000)
     txt = 'Введите код для входа: <b>%s</b>' % session['code']
@@ -38,26 +39,22 @@ def auth_user(code):
         return 'ok', 200 
     return abort(403)
 
-@app.route('/logout/')
-def out_user():
-    session.clear()
-    return render_template('app.html') 
     
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if session.get('user'):
+            print(session.get('user'))
             return view(**kwargs)
         return abort(401)
     return wrapped_view
    
     
 @app.route("/api/<string:col>", methods=["GET"])
-#@login_required
+@login_required
 def get_all(col):
-    if not hasattr(models, col): abort(404)
-    model = getattr(models, col)
-    print([i for i in dir(model) if i[:2] != '__'])
+    if not hasattr(models, col.title()): abort(404)
+    model = getattr(models, col.title())
     data = model.query.all()
     return jsonify([item.to_json() for item in data])
 
@@ -65,8 +62,8 @@ def get_all(col):
 @app.route("/api/<string:col>/<int:i>", methods=["GET"])
 @login_required
 def get_data(col, i):
-    if not hasattr(models, col): abort(404)
-    model = models[col]
+    if not hasattr(models, col.title()): abort(404)
+    model = getattr(models, col.title())
     data = model.query.get(i)
     if data is None:
         abort(404)
@@ -76,8 +73,8 @@ def get_data(col, i):
 @app.route("/api/<string:col>/<int:i>", methods=["DELETE"])
 @login_required
 def delete_data(col, i):
-    if not hasattr(models, col): abort(404)
-    model = models[col]
+    if not hasattr(models, col.title()): abort(404)
+    model = getattr(models, col.title())
     data = model.query.get(i)
     if data is None:
         abort(404)
@@ -91,8 +88,8 @@ def delete_data(col, i):
 def create_data(col):
     if not request.json:
         abort(400)
-    if not hasattr(models, col): abort(404)
-    model = models[col]
+    if not hasattr(models, col.title()): abort(404)
+    model = getattr(models, col.title())
     data = model(**request.json)
     db.session.add(data)
     db.session.commit()
@@ -104,17 +101,20 @@ def create_data(col):
 def update_data(col, i):
     if not request.json:
         abort(400)
-    if not hasattr(models, col): abort(404)
-    model = models[col]
+    if not hasattr(models, col.title()): abort(404)
+    model = getattr(models, col.title())
     data = model.query.get(i)
     if data is None:
         abort(404)
     for k, v in request.json.items():
-        if hasattr(data):
-            data[k] = v
+        if hasattr(data, k):
+            setattr(data, k, v)
     db.session.commit()
     return jsonify(data.to_json())
     
 @app.errorhandler(404)
 def page_not_found(e):
+    if '/logout' == request.path:
+        session.clear()
+        return redirect('/')
     return render_template('app.html', user=session.get('user')) 

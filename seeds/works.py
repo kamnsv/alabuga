@@ -14,6 +14,7 @@ class WorksSeeder(Seeder):
       cls=Works,
       init={
         'work': ReadLines('seeds' + os.sep + 'works.txt'),
+        'rate': generator.Integer(start=100, end=1000000),
       }
     )
     try: 

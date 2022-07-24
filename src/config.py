@@ -18,7 +18,7 @@ class DevelopmentConfig(Config):
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-    SECRET_KEY = os.urandom(16)
+    SECRET_KEY = os.getenv('SECRET_KEY')
     
 class TestingConfig(Config):
     ...

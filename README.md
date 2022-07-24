@@ -16,6 +16,7 @@
 > Ожидаемое окружение
 
 ```
+SECRET_KEY={long_rand_srring}
 MAIL_SERVER={smtp}
 MAIL_PORT={port}
 MAIL_USE_TLS={bool}

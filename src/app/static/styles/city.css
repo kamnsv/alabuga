@@ -1,0 +1,91 @@
+.city {
+	height: calc( 100vh - 100px );
+	overflow: hidden;
+}
+.city__body {
+	width: 1200px;
+	padding: 20px;
+	display: flex;
+	align-items: start;
+	gap: 20px;
+}
+
+.city__aside {
+	width: 15%
+}
+
+.city__content {
+	width: 80%
+}
+
+.col__list {
+	list-style: none;
+}
+
+.col__item {
+	transition: 1s all;
+	cursor: pointer;
+}
+.col__item:hover {
+	list-style: circle;
+}
+
+.tbl__wrap {
+  position:relative;
+}
+.tbl__scroll {
+  height: 500px;
+  overflow: auto;  
+  margin-top: 20px;
+}
+.tbl__wrap table {
+  width:100%;
+}
+
+.tbl__hspan {
+  position:absolute;   
+  top:-20px;
+  /*background: gainsboro;*/
+  z-index:2;
+  width: max-width;
+  padding: 0 5px;
+  align-items: center;
+  display: flex;
+}
+
+.tbl__th_n{
+	text-align: left;
+	width: 40px;
+}
+
+.tbl__th.name,
+.tbl__th.status,
+.tbl__th.work
+{
+	text-align: left;
+}
+
+.tbl__td.age,
+.tbl__td.lvl,
+.tbl__td.coef
+{
+	text-align: center;
+    width: 60px;
+}
+.tbl__td.coef{
+	width: 100px;
+}
+.tbl__td.rate{
+	text-align: right;
+	width: 60px;
+}
+
+.tbl__td_x{
+	text-align: center;	
+	font-weight: bold;
+	cursor: pointer;
+	color: darkred;
+}
+.tbl__td.is-write{
+	cursor: pointer;
+}

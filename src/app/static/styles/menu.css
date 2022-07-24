@@ -19,3 +19,7 @@
 	cursor: pointer
 }
 
+.menu__title{
+	color: black;
+	text-decoration: none;
+}

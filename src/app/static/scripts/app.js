@@ -23,9 +23,9 @@ const root = {
 		
 		nav_items() {
 			return {
-				home: 'Главная',
-				city: 'Город',
-				auth: typeof(user) == 'undefined' ? 'Вход' : 'Выход',
+				home: {title: 'Главная'},
+				city: {title: 'Город'},
+				auth: typeof(user) == 'undefined' ? {title: 'Вход', href: '/login'} : {title: 'Выход', href: '/logout'} 
 			}
 		},
 		
@@ -53,7 +53,7 @@ const root = {
 			if ('login' == page) {
 				page='auth';
 			}
-			if ('logout/' == page) {
+			if ('logout' == page) {
 				page = 'home';
 				location.pathname = '/';
 			}

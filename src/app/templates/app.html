@@ -13,7 +13,7 @@
 		<header class='app__head'>
 			<nav-menu :items="nav_items" @go="change_page"></nav-menu>
 			<h1 class='app__title' v-if="title">
-			{% raw %}{{title}}{% endraw %}
+			{% raw %}{{title.title}}{% endraw %}
 			</h1>
 		</header>
 		

@@ -8,5 +8,7 @@ def make_shell_context():
     Citizens=Citizens,
     Statuses=Statuses,
     Jobs=Jobs,
-    Works=Works
+    Works=Works,
+    Bosses=Bosses,
+    Hierarchy=Hierarchy
     )
