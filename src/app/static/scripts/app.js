@@ -23,8 +23,8 @@ const root = {
 		
 		nav_items() {
 			return {
-				home: {title: 'Главная'},
-				city: {title: 'Город'},
+				home: {title: 'Главная', href: '/'},
+				city: {title: 'Город', href: '/city'},
 				auth: typeof(user) == 'undefined' ? {title: 'Вход', href: '/login'} : {title: 'Выход', href: '/logout'} 
 			}
 		},

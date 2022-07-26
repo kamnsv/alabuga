@@ -40,7 +40,7 @@ const city = {
 		},//delete_data
 		
 		update_data(row, id, cur, head, e){
-			if (!e.classList.contains('is-write')) return;
+			if (!e.classList.contains('tbl__td_write')) return;
 			let nw = prompt(`Введите новое значение "${head}" для коллекции "${this.collections[this.current].title}"`, cur);
 			if (null == nw) return;
 			data = {}
@@ -65,18 +65,23 @@ const city = {
 		
 		transform(data, col){
 			let content = {headers: [], keys: []}
+			
+			for (i in data)
+				data[i]['num'] = i*1 + 1;
+			
 			content.items = data;
+			
 			switch(col) {
 			
 			  case 'Citizens':  
-				content.headers = ['Имя', 'Статус', 'Босс', 'Возраст']; 
-				content.keys = ['name',  'status', 'boss', 'age',];
+				content.headers = ['№', 'Имя', 'Деятельность', 'Доход', 'Начальник', 'Возраст']; 
+				content.keys = ['num', 'name',  'status', 'salary', 'boss', 'age',];
 				content.adds = {name: 'Имя', age: 'Возраст'};
 				break;
 				
 			  case 'Statuses': 
-				content.headers = ['Статус', 'Доход']; 
-				content.keys = ['status', 'salary'];
+				content.headers = ['№', 'Статус', 'Доход']; 
+				content.keys = ['num', 'status', 'salary'];
 				content.adds = {status: 'Статус', salary: 'Доход'};
 				break;
 			}

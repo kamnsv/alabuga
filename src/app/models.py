@@ -44,5 +44,6 @@ class Citizens(db.Model, SeedModel):
             'name': self.name,
             'age': self.age,
             'status': Statuses.query.get(self.id_status).status,
+            'salary': Statuses.query.get(self.id_status).salary,
             'boss': 'Нет' if item is None else item.name 
         }

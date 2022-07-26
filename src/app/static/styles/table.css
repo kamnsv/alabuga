@@ -14,14 +14,33 @@
 .tbl__hspan {
   position:absolute;   
   top:-20px;
-  /*background: gainsboro;*/
   z-index:2;
-  width: max-width;
   padding: 0 5px;
   align-items: center;
   display: flex;
+ 
 }
 
+.tbl__hspan_sort{
+  cursor: pointer;
+}
+
+.tbl__hspan_sort:after{
+	content: '';
+	display: block;
+	position: absolute;
+	border: 5px solid transparent;
+	left: -10px;
+	transition: .5s all;
+}
+.tbl__hspan_sort[data-sort="1"]:after{
+	border-color: transparent transparent gray transparent;
+	transform: translateY(-50%);
+}
+.tbl__hspan_sort[data-sort="-1"]:after{
+	border-color: gray transparent  transparent transparent;
+	transform: translateY(50%);
+}
 .tbl__th_n{
 	text-align: left;
 	width: 40px;

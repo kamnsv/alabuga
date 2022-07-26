@@ -1,0 +1,28 @@
+.search{
+	padding: 20px 0;
+}
+
+.search__lbl{
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.search__put,
+.search__sel{
+	height: 20px;
+	background: rgba(0,0,0,0.01);
+	border-radius: 10px;
+	padding: 0 10px;
+	border: none;
+	
+}
+
+.search__put{
+	border-bottom: 1px solid gray;
+}
+
+.search__sel{
+	cursor: pointer;
+	border-bottom: 1px solid gray;
+}
