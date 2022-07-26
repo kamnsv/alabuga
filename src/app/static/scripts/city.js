@@ -54,10 +54,6 @@ const city = {
 			collections: {
 				Citizens: {'title': 'Горожане'},
 				Statuses: {'title': 'Соц.статусы'},
-				Jobs: {'title': 'Работа'},
-				Works: {'title': 'Деятельность'},
-				Bosses: {'title': 'Начальство'},
-				Hierarchy: {'title': 'Иерархия'},
 			},
 			cach: {},
 			current: 'Citizens',
@@ -129,16 +125,11 @@ const city = {
 				break;
 				
 			  case 'Statuses': 
-				content.headers = ['Статус', 'Уровень', 'Коэфициент']; 
-				content.keys = ['status', 'lvl', 'coef'];
-				content.adds = {status: 'Статус', lvl: 'Уровень', coef: 'Коэфициент надбавки'};
+				content.headers = ['Статус', 'Доход']; 
+				content.keys = ['status', 'salary'];
+				content.adds = {status: 'Статус', coef: 'Доход'};
 				break;
 				
-			  case 'Works':
-				content.headers = ['Работа', 'Ставка'];
-				content.keys = ['work', 'rate'];
-				content.adds = {work: 'Работа', rate: 'Ставка'}
-				break;
 			}
 			return content;
 		},//transform

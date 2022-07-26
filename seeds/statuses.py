@@ -7,7 +7,7 @@ from app.gens import ReadCSV
 class StatusSeeder(Seeder):
   def __init__(self, db=None):
     super().__init__(db=db)
-    self.priority = 25
+    self.priority = 5
 
   def run(self):
     reader = ReadCSV('seeds' + os.sep + 'statuses.csv')
