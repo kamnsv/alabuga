@@ -1,54 +1,6 @@
 'use_strict';
-const add = {
-	props: ['adds'],
-	template:`<div class='add'>
-		<form class='add__form'>
-			<label class='add__lbl' v-for="(v, k) in adds">
-				<span class='add__field'>{{v}}</span>
-				<input type='text' class='add__data' :name="k"/>
-			</label>
-			<input type='button' value='Добавить'/>
-		</form>
-	</div>`
-
-}
-
-const table = {
-	props: ['headers', 'keys', 'items', 'adds'],
-	template:`<div class='tbl__wrap'>
-					<div class="tbl__scroll">
-						<table>
-							<thead>
-								<tr class='tbl__htr'>
-									<th class='tbl__th tbl__th_n'>
-										<span class='tbl__hspan'>№</span>
-									</th>
-									<th v-for="(h, i) in headers" :class="'tbl__th ' + keys[i]">
-										<span class='tbl__hspan'>{{h}}</span>
-									</th>
-									<th class='tbl__th tbl__th_x'>
-										<span class='tbl__hspan'>Удалить</span>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr class='tbl__dtr' v-for="(item, i) in items">
-									<td class='tbl__td tbl__td_n'>{{i+1}}</td>
-									<td :class="'tbl__td ' + k + (k in adds ? ' is-write':'')" v-for="(k, j) in keys" 
-										@dblclick="$emit('update', k, item.id, item[k], headers[j], $event.target)">{{item[k]}}</td>
-									<td class='tbl__td tbl__td_x' 
-										@click="$emit('del', item.id, $event.target)">x</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>`
-	
-};//
-
-
 const city = {
-    props: [], 
+    props: [],
 	data() {
 		return {
 			collections: {
@@ -109,8 +61,6 @@ const city = {
 				console.log(data);
 				e.innerHTML = nw;
 			});
-			
-			
 		},//update_data
 		
 		transform(data, col){
@@ -119,17 +69,16 @@ const city = {
 			switch(col) {
 			
 			  case 'Citizens':  
-				content.headers = ['Имя', 'Возраст']; 
-				content.keys = ['name', 'age'];
+				content.headers = ['Имя', 'Статус', 'Босс', 'Возраст']; 
+				content.keys = ['name',  'status', 'boss', 'age',];
 				content.adds = {name: 'Имя', age: 'Возраст'};
 				break;
 				
 			  case 'Statuses': 
 				content.headers = ['Статус', 'Доход']; 
 				content.keys = ['status', 'salary'];
-				content.adds = {status: 'Статус', coef: 'Доход'};
+				content.adds = {status: 'Статус', salary: 'Доход'};
 				break;
-				
 			}
 			return content;
 		},//transform
@@ -156,7 +105,7 @@ const city = {
 		
 	},//created	
 	components: {
-		'table-content': table,
+		'table-content': tbl,
 		'form-add': add
 	},//components
     template:   `<div class='city'>
@@ -188,5 +137,4 @@ const city = {
 		</div>
 	</div>
 	`
-};//home     
-
+};//city     

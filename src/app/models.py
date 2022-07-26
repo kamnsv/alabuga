@@ -38,8 +38,11 @@ class Citizens(db.Model, SeedModel):
                           db.ForeignKey('statuses.id'), 
                           nullable=False)
     def to_json(self):
+        item = Citizens.query.get(self.boss)
         return {
             'id': self.id,
             'name': self.name,
             'age': self.age,
+            'status': Statuses.query.get(self.id_status).status,
+            'boss': 'Нет' if item is None else item.name 
         }
