@@ -1,4 +1,5 @@
 'use_strict';
+var val = null;
 var city = {
     props: [],
 	data() {
@@ -11,7 +12,8 @@ var city = {
 			current: 'Citizens',
 			form_add: false,
 			action: false,
-			values: []
+			values: [],
+			books: []
 		}
 	},//data
 	
@@ -28,19 +30,15 @@ var city = {
 		curcol(){
 			return this.collections[this.current];
 		},//curcol
-		
-		books(){
-			return {}
-		},//books
 
 	},//computed
 	
 	methods: {
 		
-		submit(values){
+		submit(){
 			let res = false;
 			if ('Добавить' == this.action)
-				res = this.add_data(values);
+				res = this.add_data();
 			else if ('Править' == this.action)
 				console.log(this.values);
 				
@@ -57,8 +55,24 @@ var city = {
 			this.action = 'Править';
 		},//modal_put
 		
-		add_data(values){
-			console.log('add-data', values);
+		add_data(call= r=>{console.log(r);}){
+			val = this.values;
+			console.log(this.values);
+			fetch(`/api/${this.current}`, 
+			{
+				method: 'POST',
+				body: JSON.stringify({...this.values}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+			.then((response) => {
+				return response.json();
+			})
+			.then((res) => {
+				call(res);
+				this.content.items.push(res);
+			});
 		},//add_data
 		
 		delete_data(k, e){
@@ -109,9 +123,13 @@ var city = {
 					e.innerHTML = nw;
 				});
 			} else {
+				let e = this.content.items.find(item => {
+					return item.id == id;
+				});
+				console.log(e);
 				for (i of this.content.items)
 					if (i.id == id) {
-						
+						console.log(i);
 						return this.modal_put(i, id)
 					}
 			}
@@ -131,7 +149,7 @@ var city = {
 			  case 'Citizens':  
 				content.headers = ['№', 'Имя', 'Деятельность', 'Доход', 'Начальник', 'Возраст']; 
 				content.keys = ['num', 'name',  'Statuses.status', 'Statuses.salary', 'Citizens.name', 'age',];
-				content.adds = {name: 'Имя', age: 'Возраст'};
+				content.adds = {name: 'Имя', age: 'Возраст', 'Statuses.id_status': 'Статус', 'Citizens.boss': 'Начальник'};
 				break;
 				
 			  case 'Statuses': 
@@ -144,18 +162,48 @@ var city = {
 		},//transform
 		
 		
-		load_collections(col) {
-			if (col in this.cach)
+		load_collections(col, call=()=>{
+										this.current = col;
+										this.set_books(col);
+									}) {
+			
+			if (col in this.cach){
 				this.current = col;
+				call();
+			}
 			fetch(`/api/${col}`)
 			.then((response) => {
 				return response.json();
 			})
 			.then((data) => {
 				this.cach[col] = this.transform(data, col);
-				this.current = col;
+				call();
 			});
-		}//load_collections
+		},//load_collections
+		
+		set_books(col) {
+			switch(col) {
+			  case 'Citizens':  
+				this.books['Citizens.boss'] = {};
+				
+				for (i of this.cach[col].items)	
+					this.books['Citizens.boss'][i.id] = i.name;
+				
+				
+				let load_book_statuses = () => {
+					this.books['Statuses.id_status'] = {};
+					for (i of this.cach['Statuses'].items)	
+						this.books['Statuses.id_status'][i.id] = i.status;
+					console.log(this.books);
+				};
+				
+				if ('Statuses' in this.cach) 
+					load_book_statuses();
+				else this.load_collections('Statuses', load_book_statuses);
+					
+				break;
+			}				
+		},//set_books
 		
 	},//methods
 	
@@ -190,9 +238,9 @@ var city = {
 			</content>
 		</div>
 	</div>
-	<modal :values="values" :action="action" 
-		   :labels="content.headers.slice(1)"
-		   :names="content.keys.slice(1)"
+	<modal :values="values" 
+		   :action="action" 
+		   :items="content.adds"
 		   :books="books"
 		   @submit="submit" 
 		   @close="action=false" 
