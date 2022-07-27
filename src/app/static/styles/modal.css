@@ -1,0 +1,50 @@
+.modal__over{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	backdrop-filter: blur(5px);
+	background-color: rgba(0,0,0,0.3);
+	z-index: 10;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal__cmd{
+	cursor: pointer;	
+}
+
+.modal__form {
+	border: 1px solid gray;
+    padding: 25px 20px;
+    border-radius: 20px;
+	backdrop-filter: blur(1px);
+	background-color: rgba(255,255,255,0.6);
+	gap: 5px;
+	box-shadow: .5em 1em 2em;
+}
+
+.modal__form,
+.modal__lbl {
+	display: flex;
+    flex-direction: column;
+}
+
+.modal__send {
+	border-radius: 20px;
+	background-color: rgba(255, 255, 255 ,0.5);
+	border: none;
+	border-bottom: 1px solid black;
+	margin: 20px 10px;
+    height: 25px;
+	cursor: pointer;
+	transform: translateY(20px);
+}
+
+.modal__data {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+	padding: 5px 10px;
+}

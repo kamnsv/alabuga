@@ -1,5 +1,5 @@
 'use_strict';
-const auth = {
+var auth = {
     props: [],
 	data() {
 		return {

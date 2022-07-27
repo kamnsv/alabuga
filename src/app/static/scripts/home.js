@@ -1,5 +1,5 @@
 'use_strict';
-const home = {
+var home = {
     props: [], 
 	data() {
 		return {

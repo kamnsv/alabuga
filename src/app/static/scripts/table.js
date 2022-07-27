@@ -1,13 +1,17 @@
 'use_strict';
+console.log('table');
 var tbl = {
 	props: ['headers', 'keys', 'items', 'adds'],
+	
 	data() {
 		return {
 			ff: '', //filter_field
 			ft: '', //filter_text
 		}
 	},//data
+	
 	methods: {
+		
 		filter(field, txt){
 			this.ff = field;
 			this.ft = txt;
@@ -52,14 +56,17 @@ var tbl = {
 		
 	},//computed
 	
-	template:`
-	<search-field :fields="headers" :values="keys" @filter="filter"></search-field>
-	<div class='tbl__wrap'>
+	template:`<div class='tbl'>
+		<div class='tbl__panel'>
+			<search-field :fields="headers" :values="keys" @filter="filter"></search-field>
+			<i class="fa-solid fa-circle-plus" style="cursor: pointer" @click="$emit('add')" ></i>
+		</div>
+		<div class='tbl__wrap'>
 					<div class="tbl__scroll">
 						<table>
 							<thead>
 								<tr class='tbl__htr'>
-									<th v-for="(h, i) in headers" :class="'tbl__th ' + keys[i]">
+									<th v-for="(h, i) in headers" class='tbl__th' :data-field="keys[i]">
 										<span class='tbl__hspan tbl__hspan_sort' data-sort='0'
 										@click="sort($event.target, keys[i])">{{h}}</span>
 									</th>
@@ -70,13 +77,14 @@ var tbl = {
 							</thead>
 							<tbody>
 								<tr class='tbl__dtr' v-for="(item, i) in itemsf">
-									<td :class="'tbl__td ' + k + (k in adds ? ' tbl__td_write':'')" v-for="(k, j) in keys" 
-										@dblclick="$emit('update', k, item.id, item[k], headers[j], $event.target)">{{item[k]}}</td>
+									<td :class="'tbl__td ' + (k in adds ? ' tbl__td_write':'')" v-for="(k, j) in keys" 
+										@dblclick="$emit('update', k, item.id, item[k], headers[j], $event.target)" :data-field="k">{{item[k]}}</td>
 									<td class='tbl__td tbl__td_x' 
 										@click="$emit('del', item.id, $event.target)">x</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
-				</div>`
+				</div>
+			</div>`
 }//table-content

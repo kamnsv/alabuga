@@ -1,5 +1,6 @@
 'use_strict';
-const root = {
+
+var root = {
 	data() 
 	{
 	return {
@@ -76,7 +77,6 @@ const root = {
 		}
 	}//watch
 }//root
-
 
 const app = Vue.createApp(root);
 const vm = app.mount('#app');

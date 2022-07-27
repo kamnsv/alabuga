@@ -1,5 +1,5 @@
 'use_strict';
-const menu = {
+var menu = {
     props: ['items'],   
     template:   `<nav class='menu'>
                         <ul class='menu__list'>

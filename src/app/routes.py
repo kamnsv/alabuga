@@ -3,6 +3,7 @@ from flask_mail import Mail, Message
 import os
 import random
 import functools
+from sqlalchemy import exc
 
 from . import create_app, db
 from . import models
@@ -78,8 +79,14 @@ def delete_data(col, i):
     data = model.query.get(i)
     if data is None:
         abort(404)
-    db.session.delete(data)
-    db.session.commit()
+    try:     
+        db.session.delete(data)
+        db.session.commit()
+    except exc.IntegrityError as e:
+        if 'ForeignKeyViolation' in str(e): 
+            return 'ForeignKeyViolation', 200
+        else:
+            return e, 200
     return 'ok', 200
 
 

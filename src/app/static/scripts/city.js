@@ -1,5 +1,5 @@
 'use_strict';
-const city = {
+var city = {
     props: [],
 	data() {
 		return {
@@ -9,7 +9,9 @@ const city = {
 			},
 			cach: {},
 			current: 'Citizens',
-			form_add: false
+			form_add: false,
+			action: false,
+			values: []
 		}
 	},//data
 	
@@ -17,35 +19,68 @@ const city = {
 		
 		access(){
 			return typeof(user) != 'undefined';
-		},
+		},//access
 		
 		content(){
 			return this.cach[this.current];
-		},
+		},//content
+		
+		curcol(){
+			return this.collections[this.current];
+		},//curcol
+		
+		books(){
+			return {}
+		},//books
 
 	},//computed
 	
 	methods: {
+		
+		submit(values){
+			let res = false;
+			if ('Добавить' == this.action)
+				res = this.add_data(values);
+			else if ('Править' == this.action)
+				console.log(this.values);
+				
+			if (res) this.action = false;
+		},//submit
+		
+		modal_add(){
+			this.action = 'Добавить';
+		},//modal_add
+		
+		modal_put(values, id){
+			this.values = JSON.parse(JSON.stringify(values));
+			this.id = id;
+			this.action = 'Править';
+		},//modal_put
+		
+		add_data(values){
+			console.log('add-data', values);
+		},//add_data
+		
 		delete_data(k, e){
+			
+			if (!confirm(`Вы действительно хотите удалить ${this.curcol.title}?`)) return;
+			
 			fetch(`/api/${this.current}/${k}`, {method: 'DELETE'})
 			.then((response) => {
 				return response.text();
 			})
 			.then((data) => {
 				console.log(data);
-				e.parentNode.remove();
+				if ('ok' == data)
+					e.parentNode.remove();
+				else if ('ForeignKeyViolation' == data)
+					alert('Сначала нужно удалить зависимости из дуругих таблиц');
 			});
 			
 			console.log('del', this.current, k);
 		},//delete_data
 		
-		update_data(row, id, cur, head, e){
-			if (!e.classList.contains('tbl__td_write')) return;
-			let nw = prompt(`Введите новое значение "${head}" для коллекции "${this.collections[this.current].title}"`, cur);
-			if (null == nw) return;
-			data = {}
-			data[row] = nw;
-			console.log(data);
+		put_update(data, id, call){
 			fetch(`/api/${this.current}/${id}`, 
 			{
 				method: 'PUT',
@@ -57,10 +92,30 @@ const city = {
 			.then((response) => {
 				return response.json();
 			})
-			.then((data) => {
-				console.log(data);
-				e.innerHTML = nw;
+			.then((res) => {
+				call(res)
 			});
+		},//send_update
+		
+		update_data(col, id, cur, head, e){
+			if (e.classList.contains('tbl__td_write')) {
+				let nw = prompt(`Введите новое значение "${head}" для коллекции "${this.curcol.title}"`, cur);
+				if (null == nw) return;
+				data = {}
+				data[col] = nw;
+				console.log(data);
+				this.put_update(data, id, res => {
+					console.log(res);
+					e.innerHTML = nw;
+				});
+			} else {
+				for (i of this.content.items)
+					if (i.id == id) {
+						
+						return this.modal_put(i, id)
+					}
+			}
+			
 		},//update_data
 		
 		transform(data, col){
@@ -75,7 +130,7 @@ const city = {
 			
 			  case 'Citizens':  
 				content.headers = ['№', 'Имя', 'Деятельность', 'Доход', 'Начальник', 'Возраст']; 
-				content.keys = ['num', 'name',  'status', 'salary', 'boss', 'age',];
+				content.keys = ['num', 'name',  'Statuses.status', 'Statuses.salary', 'Citizens.name', 'age',];
 				content.adds = {name: 'Имя', age: 'Возраст'};
 				break;
 				
@@ -111,7 +166,7 @@ const city = {
 	},//created	
 	components: {
 		'table-content': tbl,
-		'form-add': add
+		'modal': modal
 	},//components
     template:   `<div class='city'>
 			<div v-if="!access" class='city__body city__body_noaccess'>Нет доступа</div>
@@ -123,23 +178,24 @@ const city = {
 						@click="load_collections(k)">
 						{{v.title}}
 					</li>
-					<!--<li class='col__add' @click="form_add=true">Добавить</li>-->
+					</li>
 				</ul>
 			</aside>
-			<form-add v-if="form_add" :adds="content.adds"></form-add>
 			<content class='city__content' >
-						<table-content
-							:headers="content.headers"
-							:keys="content.keys"
-							:items="content.items"
-							:adds="content.adds"
+						<table-content v-bind="content"							
 							@del="delete_data"
 							@update="update_data"
+							@add="modal_add"
 						></table-content>
-					</div>
-				</div>
 			</content>
 		</div>
 	</div>
+	<modal :values="values" :action="action" 
+		   :labels="content.headers.slice(1)"
+		   :names="content.keys.slice(1)"
+		   :books="books"
+		   @submit="submit" 
+		   @close="action=false" 
+		   ></modal>
 	`
 };//city     

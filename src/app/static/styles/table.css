@@ -82,3 +82,9 @@
 	font-style: normal;
 	cursor: pointer;
 }
+
+.tbl__panel{
+	display: flex;
+	align-items: center;
+    gap: 20px;
+}

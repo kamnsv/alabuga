@@ -5,19 +5,13 @@ var search = {
 		return {
 			txt: '',
 			field: '',
-			tid: 0
 		}
 	},//data
 	
 	methods: {
 		
 		filter(){
-			if (this.tid)
-				clearTimeout(this.tid);
-			this.tid = setTimeout(()=> {this.$emit('filter', 
-										this.field,
-										this.txt)
-							}, 500);
+			this.$emit('filter', this.field, this.txt)
 		},//filter
 		
 	},//methods
@@ -39,4 +33,4 @@ var search = {
 			</select>
 		</label>
 </div>`
-}//table-content
+}//search
