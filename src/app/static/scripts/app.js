@@ -1,5 +1,4 @@
 'use_strict';
-
 var root = {
 	data() 
 	{
@@ -35,13 +34,12 @@ var root = {
 	methods: {
 		
 		change_page(page_name) {
-			console.log('this.current_page')
+
 			if (location.pathname != '/'){
 				location.pathname = '/';
 			}
 			else {
 				this.current_page = page_name;
-				console.log(page_name);
 			}
 		}
 		
@@ -60,7 +58,6 @@ var root = {
 			}
 			this.current_page = page;
 		}
-		console.log(this.current_page);
 		
 	},//mounted
 	

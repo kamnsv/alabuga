@@ -31,7 +31,7 @@ var modal = {
 						:name="k" v-model="values[k]"/>
 						
 					<select v-else class='modal__book' v-model="values[field(k)]">
-						<option v-for="(val, id) in books[k]" :value="id">{{val}}</option>
+						<option v-for="data in books[k]" :value="data.id" :data-order="data.order_by">{{data.val}}</option>
 					</select>
 					
 				</label>

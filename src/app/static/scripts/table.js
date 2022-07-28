@@ -1,5 +1,4 @@
 'use_strict';
-console.log('table');
 var tbl = {
 	props: ['headers', 'keys', 'items', 'adds'],
 	
@@ -44,21 +43,26 @@ var tbl = {
 	computed: {
 	  
 	  itemsf() {
-		return this.items.filter((item) => { 
-		    if (!this.ft) return true;
-			//По полю
-		    if (this.ff)  
-				return (item[this.ff] + '').indexOf(this.ft) > -1;
-			//По всем полям
-			let s = [];
-			for (i in item)  
-				if ('id' != i)
-					s.push(item[i]);
-			s = s.join(' ');
-			//if (s.indexOf(this.ft) > -1)
-			//	console.log(s, s.indexOf(this.ft), this.ft);
-			return s.indexOf(this.ft) > -1;
-		  });
+		  
+		let data;
+		try {
+			data = this.items.filter((item) => { 
+				if (!this.ft) return true;
+				//По полю
+				if (this.ff)  
+					return (item[this.ff] + '').indexOf(this.ft) > -1;
+				//По всем полям
+				let s = [];
+				for (i in item)  
+					if ('id' != i)
+						s.push(item[i]);
+				s = s.join(' ');
+				//if (s.indexOf(this.ft) > -1)
+				//	console.log(s, s.indexOf(this.ft), this.ft);
+				return s.indexOf(this.ft) > -1;
+			  });
+		   } catch {}
+		   return data;
 		}
 		
 	},//computed

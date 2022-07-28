@@ -7,7 +7,15 @@ var city = {
 				Citizens: {'title': 'Горожане'},
 				Statuses: {'title': 'Соц.статусы'},
 			},
-			cach: {},
+			cach: {
+					'Citizens': 
+					{
+						adds:{}, 
+						headers:[],
+						keys:[],
+						valid:[]
+					}
+			},
 			current: 'Citizens',
 			form_add: false,
 			action: false,
@@ -58,7 +66,7 @@ var city = {
 		},//modal_put
 		
 		add_data(vals, call){
-			console.log(vals);
+
 			fetch(`/api/${this.current}`, 
 			{
 				method: 'POST',
@@ -86,18 +94,16 @@ var city = {
 				return response.text();
 			})
 			.then((data) => {
-				console.log(data);
 				if ('ok' == data)
 					e.parentNode.remove();
 				else if ('ForeignKeyViolation' == data)
 					alert('Сначала нужно удалить зависимости из дуругих таблиц');
 			});
 			
-			console.log('del', this.current, k);
 		},//delete_data
 		
 		put_update(data, id, call){
-			console.log(data);
+
 			fetch(`/api/${this.current}/${id}`, 
 			{
 				method: 'PUT',
@@ -177,27 +183,40 @@ var city = {
 		},//load_collections
 		
 		set_books(col) {
+			let asc = (a, b) => (a.order_by > b.order_by) ? 1 : -1
+			let desc = (a, b) => (a.order_by > b.order_by) ? -1 : -1
+			try {
 			switch(col) {
-			  case 'Citizens':  
-				this.books['Citizens.boss'] = {};
+				case 'Citizens':  
+					let data = [];
 				
-				for (i of this.cach[col].items)	
-					this.books['Citizens.boss'][i.id] = i.name;
+					for (i of this.cach[col].items)	
+						data.push({
+							id: i.id,
+							val: i.name,
+							order_by:i.name+i.id
+						});
 				
+					this.books['Citizens.boss'] = data.sort(asc);
 				
-				let load_book_statuses = () => {
-					this.books['Statuses.id_status'] = {};
-					for (i of this.cach['Statuses'].items)	
-						this.books['Statuses.id_status'][i.id] = i.status;
-					console.log(this.books);
-				};
+					let load_book_statuses = () => {
+						let data = [];
+						for (i of this.cach['Statuses'].items)	
+							data.push({
+								id: i.id,
+								val: i.status,
+								order_by: i.salary
+							});
+						this.books['Statuses.id_status'] = data.sort(desc);
+					};
 				
-				if ('Statuses' in this.cach) 
-					load_book_statuses();
-				else this.load_collections('Statuses', load_book_statuses);
+					if ('Statuses' in this.cach) 
+						load_book_statuses();
+					else this.load_collections('Statuses', load_book_statuses);
 					
-				break;
-			}				
+					break;
+			}//switch(col)
+		  } catch {}			
 		},//set_books
 		
 	},//methods
@@ -220,7 +239,6 @@ var city = {
 						class='col__item' 
 						@click="load_collections(k)">
 						{{v.title}}
-					</li>
 					</li>
 				</ul>
 			</aside>
