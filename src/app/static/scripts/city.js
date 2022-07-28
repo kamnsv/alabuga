@@ -1,5 +1,4 @@
 'use_strict';
-var val = null;
 var city = {
     props: [],
 	data() {
@@ -36,13 +35,16 @@ var city = {
 	methods: {
 		
 		submit(){
-			let res = false;
-			if ('Добавить' == this.action)
-				res = this.add_data();
-			else if ('Править' == this.action)
-				console.log(this.values);
+			let vals = {};
+			for (i in this.values)
+				if (this.content.valid.includes(i))
+					vals[i] = this.values[i];
 				
-			if (res) this.action = false;
+			let res = ()=>{this.action = false;}
+			if ('Добавить' == this.action)
+				this.add_data(vals, res);
+			else if ('Править' == this.action)
+				this.put_update(vals, this.id, res);
 		},//submit
 		
 		modal_add(){
@@ -55,13 +57,12 @@ var city = {
 			this.action = 'Править';
 		},//modal_put
 		
-		add_data(call= r=>{console.log(r);}){
-			val = this.values;
-			console.log(this.values);
+		add_data(vals, call){
+			console.log(vals);
 			fetch(`/api/${this.current}`, 
 			{
 				method: 'POST',
-				body: JSON.stringify({...this.values}),
+				body: JSON.stringify(vals),
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -70,8 +71,9 @@ var city = {
 				return response.json();
 			})
 			.then((res) => {
-				call(res);
+				res['num'] = this.content.items.length + 1;
 				this.content.items.push(res);
+				call();
 			});
 		},//add_data
 		
@@ -95,6 +97,7 @@ var city = {
 		},//delete_data
 		
 		put_update(data, id, call){
+			console.log(data);
 			fetch(`/api/${this.current}/${id}`, 
 			{
 				method: 'PUT',
@@ -107,32 +110,22 @@ var city = {
 				return response.json();
 			})
 			.then((res) => {
-				call(res)
+				for (i in this.content.items)
+					if (id == this.content.items[i].id){
+						res['num'] = this.content.items[i].num;
+						this.content.items[i] = res;
+					}
+				call();
 			});
 		},//send_update
 		
 		update_data(col, id, cur, head, e){
-			if (e.classList.contains('tbl__td_write')) {
-				let nw = prompt(`Введите новое значение "${head}" для коллекции "${this.curcol.title}"`, cur);
-				if (null == nw) return;
-				data = {}
-				data[col] = nw;
-				console.log(data);
-				this.put_update(data, id, res => {
-					console.log(res);
-					e.innerHTML = nw;
-				});
-			} else {
-				let e = this.content.items.find(item => {
+			
+			let el = this.content.items.find(item => {
 					return item.id == id;
 				});
-				console.log(e);
-				for (i of this.content.items)
-					if (i.id == id) {
-						console.log(i);
-						return this.modal_put(i, id)
-					}
-			}
+				
+			return this.modal_put(el, id)	
 			
 		},//update_data
 		
@@ -150,12 +143,14 @@ var city = {
 				content.headers = ['№', 'Имя', 'Деятельность', 'Доход', 'Начальник', 'Возраст']; 
 				content.keys = ['num', 'name',  'Statuses.status', 'Statuses.salary', 'Citizens.name', 'age',];
 				content.adds = {name: 'Имя', age: 'Возраст', 'Statuses.id_status': 'Статус', 'Citizens.boss': 'Начальник'};
+				content.valid = ['name','age','boss','id_status'];
 				break;
 				
 			  case 'Statuses': 
 				content.headers = ['№', 'Статус', 'Доход']; 
 				content.keys = ['num', 'status', 'salary'];
 				content.adds = {status: 'Статус', salary: 'Доход'};
+				content.valid = ['status', 'salary'];
 				break;
 			}
 			return content;

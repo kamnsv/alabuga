@@ -71,11 +71,6 @@ var root = {
 		'auth':     auth,
 		'city':     city
 	},//components
-	watch:{
-		current_page(new_page, old_page){
-
-		}
-	}//watch
 }//root
 
 const app = Vue.createApp(root);

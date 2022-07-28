@@ -11,9 +11,14 @@ var modal = {
 			return 1 != field.split('.').length
 		},
 		field(forkey){
-			return forkey.split('.')[1];
+			let k = forkey.split('.')[1];
+			if (!(k in this.values))
+				this.values[k] = this.values[forkey];
+			return k;
 		}
+		
 	},//methods
+
 	
 	template:`
 		<div class='modal__over' id='form-over' v-if="action" 
@@ -25,7 +30,7 @@ var modal = {
 					<input type='text' class='modal__data' v-if="!issel(k)"
 						:name="k" v-model="values[k]"/>
 						
-					<select v-else class='modal__sel' v-model="values[field(k)]" :data-k="k">
+					<select v-else class='modal__book' v-model="values[field(k)]">
 						<option v-for="(val, id) in books[k]" :value="id">{{val}}</option>
 					</select>
 					

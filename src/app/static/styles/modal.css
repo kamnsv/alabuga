@@ -43,8 +43,13 @@
 	transform: translateY(20px);
 }
 
-.modal__data {
+.modal__data,
+.modal__book {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
 	padding: 5px 10px;
+}
+
+.modal__book {
+	padding: 5px 5px;
 }
