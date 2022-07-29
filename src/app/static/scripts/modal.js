@@ -20,9 +20,9 @@ var modal = {
 	},//methods
 
 	
-	template:`
-		<div class='modal__over' id='form-over' v-if="action" 
-			@click="close($event.target.id)">
+	template:`<div class='modal' v-if="action">
+		<div class='modal__over' id='form-over' @click="close($event.target.id)">
+			<div class='modal__wrap'>
 			<div class='modal__form'>
 				<label class='modal__lbl' v-for="(v, k) in items">
 					<span class='modal__field'>{{v}}</span>
@@ -36,6 +36,7 @@ var modal = {
 					
 				</label>
 				<button class='modal__send' @click="$emit('submit')">{{action}}</button>
+			</div>
 			</div>
 		</div>
 `

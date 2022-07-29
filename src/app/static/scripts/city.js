@@ -65,25 +65,6 @@ var city = {
 			this.action = 'Править';
 		},//modal_put
 		
-		add_data(vals, call){
-
-			fetch(`/api/${this.current}`, 
-			{
-				method: 'POST',
-				body: JSON.stringify(vals),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-			.then((response) => {
-				return response.json();
-			})
-			.then((res) => {
-				res['num'] = this.content.items.length + 1;
-				this.content.items.push(res);
-				call();
-			});
-		},//add_data
 		
 		delete_data(k, e){
 			
@@ -96,11 +77,42 @@ var city = {
 			.then((data) => {
 				if ('ok' == data)
 					e.parentNode.remove();
-				else if ('ForeignKeyViolation' == data)
-					alert('Сначала нужно удалить зависимости из дуругих таблиц');
+				else return this.show_error(data)
 			});
 			
 		},//delete_data
+		
+		show_error(txt){
+			switch(txt) {
+				case 'ForeignKeyViolation':  
+					return alert('Сначала нужно удалить зависимости из дуругих таблиц');
+				
+			}
+			alert(txt);
+		},
+		
+		add_data(vals, call){
+
+			fetch(`/api/${this.current}`, 
+			{
+				method: 'POST',
+				body: JSON.stringify(vals),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				} else return response.text();
+			})
+			.then((res) => {
+				if ('string' == typeof res) return this.show_error(res)
+				res['num'] = this.content.items.length + 1;
+				this.content.items.push(res);
+				call();
+			});
+		},//add_data
 		
 		put_update(data, id, call){
 
@@ -113,9 +125,12 @@ var city = {
 				}
 			})
 			.then((response) => {
-				return response.json();
+				if (response.ok) {
+					return response.json();
+				} else return response.text();
 			})
 			.then((res) => {
+				if ('string' == typeof res) return this.show_error(res)
 				for (i in this.content.items)
 					if (id == this.content.items[i].id){
 						res['num'] = this.content.items[i].num;
