@@ -54,7 +54,8 @@ def login_required(view):
 @app.route("/api/<string:col>", methods=["GET"])
 @login_required
 def get_all(col):
-    if not hasattr(models, col.title()): abort(400)
+    if not hasattr(models, col.title()):
+        return f'Коллеция {col.title()} не найдена', 400
     model = getattr(models, col.title())
     data = model.query.all()
     return jsonify([item.to_json() for item in data])
@@ -63,39 +64,38 @@ def get_all(col):
 @app.route("/api/<string:col>/<int:i>", methods=["GET"])
 @login_required
 def get_data(col, i):
-    if not hasattr(models, col.title()): abort(400)
+    if not hasattr(models, col.title()): 
+        return f'Коллеция {col.title()} не найдена', 400
     model = getattr(models, col.title())
     data = model.query.get(i)
     if data is None:
-        abort(400)
+        return f'Данные не найдены', 400
     return jsonify(data.to_json())
 
 
 @app.route("/api/<string:col>/<int:i>", methods=["DELETE"])
 @login_required
 def delete_data(col, i):
-    if not hasattr(models, col.title()): abort(400)
+    if not hasattr(models, col.title()): 
+        return f'Коллеция {col.title()} не найдена', 400
     model = getattr(models, col.title())
     data = model.query.get(i)
     if data is None:
-        abort(400)
+        return f'Данные для удаления не найдены', 400
     try:     
         db.session.delete(data)
         db.session.commit()
     except exc.IntegrityError as e:
         if 'ForeignKeyViolation' in str(e): 
-            return 'ForeignKeyViolation', 200
+            return 'Сначала нужно удалить зависимости из дуругих таблиц', 400
         else:
-            return e, 200
+            return e, 400
     return 'ok', 200
 
 
 @app.route('/api/<string:col>', methods=['POST'])
 @login_required
 def create_data(col):
-    if not request.json: abort(400)
-        
-    if not hasattr(models, col.title()): abort(400)
     
     error_data = check_data(col.title(), request.json)
     if error_data:
@@ -111,10 +111,7 @@ def create_data(col):
 @app.route('/api/<string:col>/<int:i>', methods=['PUT'])
 @login_required
 def update_data(col, i):
-    if not request.json: abort(400)
-
-    if not hasattr(models, col.title()): abort(400)
-    
+   
     error_data = check_data(col.title(), request.json, i)
     if error_data:
         return error_data, 400
@@ -123,7 +120,7 @@ def update_data(col, i):
     
     data = model.query.get(i)
     if data is None:
-        abort(400)
+        return f'Данные для обновления не найдены', 400
     for k, v in request.json.items():
         if hasattr(data, k):
             setattr(data, k, v)
@@ -138,25 +135,52 @@ def page_not_found(e):
     return render_template('app.html', user=session.get('user')) 
     
     
-def check_data(col, data, i=None):
+def check_data(col, data, row=None):
+
+    if not data: return 'Данные не найдены'
+
+    if not hasattr(models, col.title()): return f'Коллеция {col.title()} не найдена'
+    
     model = getattr(models, col)
-    if 'Statuses' == col  and i is not None:
+   
+    if 'Statuses' == col:
+        
+        # проверка данных
+        for i in ('status', 'salary'):
+            val = data.get(i, None)
+            if '' == val or val is None:
+                return f'Пустое значение для поля "%s"' % {'status': 'Статус', 'salary': 'Доход'}[i]
+        
         #проверка на salary
-        salary = int(data.get('salary', None))
+        salary = str(data.get('salary'))
+        if not salary.isdigit(): return 'Доход должен быть положительным целым числом'
+        salary = int(salary)
+        if salary <=0: return 'Доход должен быть положительным целым числом'
         
-        # на уникальность
-        if salary is None or salary <=0:
-            return 'Доход должен быть положительным целым числом'
+        
+        
+        # Добавление   
+        if row is None: 
+        
+            # на уникальность
             
-        if Statuses.query.filter_by(salary=salary).filter(Statuses.id!=i).count():
-            return 'Доход должен быть уникальным для статуса, т.к. по нему выстраивается иерархия'
+            status = str(data.get('status'))
+            if Statuses.query.filter_by(status=status).filter(Statuses.id!=row).count():
+                return f'Статус "{status}" уже есть в таблице статусов'
+                
+            
+            if Statuses.query.filter_by(salary=salary).filter(Statuses.id!=row).count():
+                return 'Доход должен быть уникальным для статуса, т.к. по нему выстраивается иерархия'
+            return
         
+        
+        # Правка: проверка иерархии
         
         # сколько людей с таким статусом
         
         join_status_citizen = Statuses.query.join(Citizens, Statuses.id==Citizens.id_status)
         
-        count_subw = join_status_citizen.filter(Statuses.id==i).count()
+        count_subw = join_status_citizen.filter(Statuses.id==row).count()
         
         # статус свободен для перемещения по иерархии
         if not count_subw: return False
@@ -168,7 +192,7 @@ def check_data(col, data, i=None):
         
         a, b = None, None
         for j, e in enumerate(table_hierarchy):
-            if e.id == i:
+            if e.id == row:
                 a = table_hierarchy[j-1] if j > 0 else None
                 b = table_hierarchy[j+1] if j < len(table_hierarchy)-1 else None
 
@@ -180,3 +204,15 @@ def check_data(col, data, i=None):
     
     if 'Citizens' == col: # проверка на иерархию
         ...
+        # проверка данных
+        #for i in ('name', 'age', 'id_status'):
+         #   val = data.get(i, None)
+          #  if '' == val or val is None:
+           #     return f'Пустое значение для поля "%s"' % {'name': 'Имя', 
+            #                                               'age': 'Возраст', 
+             #                                              'id_status': 'Статус'}[i]
+        
+        
+    return None    
+        
+        

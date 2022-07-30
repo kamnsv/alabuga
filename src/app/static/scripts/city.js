@@ -83,11 +83,6 @@ var city = {
 		},//delete_data
 		
 		show_error(txt){
-			switch(txt) {
-				case 'ForeignKeyViolation':  
-					return alert('Сначала нужно удалить зависимости из дуругих таблиц');
-				
-			}
 			alert(txt);
 		},
 		
