@@ -1,6 +1,28 @@
 from . import models
 from .models import Statuses, Citizens
 
+def can_delete(col, row):
+    if 'Statuses' == col:
+        if error := status_del(row):
+            return error
+            
+    if 'Citizens' == col:
+        if error := citizen_del(row):
+            return error
+
+def status_del(row):
+    # сколько людей с таким статусом
+    count_citizens = Citizens.query.filter(Citizens.id_status==row).count()
+    if count_citizens: 
+        return 'Статус удалить нельзя, пока есть горожане с таким статусом'
+    
+def citizen_del(row):
+    # у скольки людей он начальник
+    count_subw = Citizens.query.filter(Citizens.boss==row).count()
+    if count_subw: 
+        return 'Горожанина удалить нельзя, пока он у кого-то начальник'
+
+    
 def check_data(col, data, row=None):
     
     if error := common_data(col, data):
@@ -84,7 +106,6 @@ def status_data(data, row=None):
     if b is not None and b.salary <= salary:
         return f'Доход не может быть больше {b.salary}, чем у статуса "{b.status}" выше по иерархии'  
     
-
 def citizen_data(data, row=None):
 
     if error := check_isna(data, {'name': 'Имя', 'age': 'Возраст', 'id_status': 'Статус'}):

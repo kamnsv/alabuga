@@ -8,7 +8,7 @@ from sqlalchemy import exc
 from . import create_app, db
 from . import models
 from .models import Statuses, Citizens
-from .check import check_data
+from .check import check_data, can_delete
  
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 mail = Mail(app)
@@ -83,14 +83,14 @@ def delete_data(col, i):
     data = model.query.get(i)
     if data is None:
         return f'Данные для удаления не найдены', 400
-    try:     
+    if error_delete := can_delete(col.title(), i):
+        return error_delete, 400
+    try:    
         db.session.delete(data)
         db.session.commit()
-    except exc.IntegrityError as e:
-        if 'ForeignKeyViolation' in str(e): 
-            return 'Сначала нужно удалить зависимости из дуругих таблиц', 400
-        else:
-            return e, 400
+    except Exception as e:
+        return e, 400
+    
     return 'ok', 200
 
 
