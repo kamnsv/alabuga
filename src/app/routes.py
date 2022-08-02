@@ -120,8 +120,6 @@ def update_data(col, i):
     model = getattr(models, col.title())
     
     data = model.query.get(i)
-    if data is None:
-        return f'Данные для обновления не найдены', 400
     for k, v in request.json.items():
         if hasattr(data, k):
             setattr(data, k, v)

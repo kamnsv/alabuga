@@ -198,7 +198,11 @@ var city = {
 			try {
 			switch(col) {
 				case 'Citizens':  
-					let data = [];
+					let data = [{
+						id: 0,
+						val: 'Нет',
+						order_by:''
+					}];
 				
 					for (i of this.cach[col].items)	
 						data.push({
@@ -206,7 +210,7 @@ var city = {
 							val: i.name,
 							order_by:i.name+i.id
 						});
-				
+					
 					this.books['Citizens.boss'] = data.sort(asc);
 				
 					let load_book_statuses = () => {

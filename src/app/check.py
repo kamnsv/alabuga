@@ -2,6 +2,12 @@ from . import models
 from .models import Statuses, Citizens
 
 def can_delete(col, row):
+
+    col = col.title()
+    
+    if error := access_col(col):
+        return error
+    
     if 'Statuses' == col:
         if error := status_del(row):
             return error
@@ -22,26 +28,39 @@ def citizen_del(row):
     if count_subw: 
         return 'Горожанина удалить нельзя, пока он у кого-то начальник'
 
-    
+   
 def check_data(col, data, row=None):
     
-    if error := common_data(col, data):
+    col = col.title()
+    
+    if error := access_col(col):
         return error
     
-    if 'Statuses' == col.title():
+    if not data: return 'Данные не найдены'
+    
+    if error := valid_update(col, row):
+        return error
+    
+    if 'Statuses' == col:
         if error := status_data(data, row):
             return error
     
-    if 'Citizens' == col.title():
+    if 'Citizens' == col:
         if error := citizen_data(data, row):
             return error
         
-def common_data(col, data): # общая проверка на название модели и тип
-    if not data: return 'Данные не найдены'
-
-    if not hasattr(models, col.title()): return f'Коллеция {col.title()} не найдена'
+def access_col(col): # общая проверка на название модели и тип
     
-    return None
+    if col not in ('Statuses', 'Citizens'): 
+        return f'Коллеция {col} не найдена'
+    
+def valid_update(col, row=None):
+    if row is None: return None
+    
+    model = getattr(models, col)
+    data = model.query.get(row)
+    if data is None:
+        return 'Данные для обновления не найдены'
 
 def check_isna(data, fileds): # проверка на пустое значение
     for i in fileds:
@@ -115,6 +134,7 @@ def citizen_data(data, row=None):
     # проверка типов id_status
     id_status = str(data.get('id_status'))
     if not id_status.isdigit(): return 'Не корректный тип данных "id_status"'
+    id_status = int(id_status)
     
     # проверка типов boss
     boss = str(data.get('boss'))
@@ -127,19 +147,16 @@ def citizen_data(data, row=None):
     age = int(age)
     if age <=0: return 'Возраст должен быть положительным целым числом'
     
-
-    # Добавление   
-    if row is None: 
-        # Если босс не задан то может быть любой статус
-        if boss is None: return None
+    join_status_citizen = Statuses.query.join(Citizens, Statuses.id==Citizens.id_status)
     
-        # проверка: boss должен быть выше по иерархии на одно звено
+    
+    # проверка: boss должен быть выше по иерархии на ранг
         
-        join_status_citizen = Statuses.query.join(Citizens, Statuses.id==Citizens.id_status)
-        
+    def check_boss():
+    
         status_boss = join_status_citizen.filter(Citizens.id==boss).all()
         if not len(status_boss):
-            return 'Начальник должен иметь статус выше подчиненного'
+            return 'Заданный начальник не найден'
         boss_data = status_boss[0]
         
         selected_status = Statuses.query.get(id_status)
@@ -152,11 +169,65 @@ def citizen_data(data, row=None):
         table_hierarchy = join_status_citizen.group_by(Statuses.id).order_by(Statuses.salary).all()
         
         for j, e in enumerate(table_hierarchy):
+            print(id_status, e.to_json(), e.id, id_status == e.id)
             if id_status == e.id:
                 if table_hierarchy[j+1].id != boss_data.id:
                     return 'Начальник должен превышать на один ранг'
-                else: return None
+                else: return None  
+        
+    # Добавление   
+    if row is None: 
+        # Если босс не задан то может быть любой статус
+        if not boss: return None
+        return check_boss()
     
     else: # правка уже существующего горожанина
-        ...
-        
+        citizen = Citizens.query.get(row)
+        count_subw = Citizens.query.filter(Citizens.boss==row).count()
+        if citizen.id_status == id_status and citizen.boss != boss:
+            # проверка нового начальника
+            if not boss: return None
+            # какой статус может иметь новый начальник
+            # Статусы горожанина и начальника должны быть соседними по иерархии и начальник выше
+            table_hierarchy = join_status_citizen.group_by(Statuses.id).order_by(Statuses.salary).all()
+            status_boss = None
+            for j, e in enumerate(table_hierarchy):
+                if citizen.id_status == e.id:
+                    if len(table_hierarchy) != j + 1:
+                        status_boss = table_hierarchy[j + 1]
+            
+            if status_boss is None and boss is None:
+                return None # верно, не дожно быть начальника у самого главного
+            
+            if status_boss is None:
+                return 'Горожанин имеет максимальный статус и начальника иметь не может'
+            
+            
+            # определяем статус нового начальника
+            citizen_boss = Citizens.query.get(boss)
+            
+            if citizen_boss.id_status != status_boss.id:
+                a = Statuses.query.get(citizen.id_status).status
+                b = Statuses.query.get(citizen_boss.id_status).status
+                c = Statuses.query.get(status_boss.id).status
+                return f'У "{a}" не может быть начальник "{b}", может быть только "{c}"'
+            
+        elif citizen.id_status != id_status and citizen.boss == boss:
+            # проверка нового статуса
+            # менять статус нельзя если есть подчиненые
+            
+            if count_subw > 0: 
+                return f'Менять статус нельзя если есть подчиненые, сейчас их {count_subw}'
+            
+            # если нет начальника и подчиненных то статус может быть любой
+            if not citizen.boss: return None# нет начальника
+
+        else: # проверка начальника и статуса
+            if count_subw > 0: 
+                return f'Менять статус нельзя если есть подчиненые, сейчас их {count_subw}'           
+            
+            # нет подчиненных
+            if not boss: return None # нет начальника
+            
+            # начальник должен быть на ранг выше    
+            return check_boss()               
