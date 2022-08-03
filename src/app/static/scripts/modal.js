@@ -30,8 +30,26 @@ var modal = {
 					<input type='text' class='modal__data' v-if="!issel(k)"
 						:name="k" v-model="values[k]"/>
 						
-					<select v-else class='modal__book' v-model="values[field(k)]">
-						<option v-for="data in books[k]" :value="data.id" :data-order="data.order_by">{{data.val}}</option>
+					<select v-else class='modal__book' 
+							:name="k" v-model="values[field(k)]">
+						
+						
+						<option v-if="books[k].empty" 
+								:value="books[k].empty.id">
+								{{books[k].empty.val}}
+						</option>
+								
+						<option v-if="books[k].type=='list'" 
+								v-for="data in books[k].data" 
+								:value="data.id">{{data.val}}
+						</option>
+								
+						<optgroup v-if="books[k].type=='group'" 
+								  v-for="(items, label) in books[k].data"
+								  :label="label">
+							<option v-for="data in items" :value="data.id">{{data.val}}</option>
+						</optgroup>
+						
 					</select>
 					
 				</label>

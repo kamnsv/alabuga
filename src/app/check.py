@@ -172,7 +172,7 @@ def citizen_data(data, row=None):
             print(id_status, e.to_json(), e.id, id_status == e.id)
             if id_status == e.id:
                 if table_hierarchy[j+1].id != boss_data.id:
-                    return 'Начальник должен превышать на один ранг'
+                    return 'Статус начальника должен превышать на один ранг'
                 else: return None  
         
     # Добавление   

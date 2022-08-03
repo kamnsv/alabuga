@@ -193,35 +193,43 @@ var city = {
 		},//load_collections
 		
 		set_books(col) {
-			let asc = (a, b) => (a.order_by > b.order_by) ? 1 : -1
-			let desc = (a, b) => (a.order_by > b.order_by) ? -1 : -1
+			let asc = (a, b) => (a.order > b.order) ? 1 : -1
+			let desc = (a, b) => (a.order > b.order) ? -1 : -1
 			try {
 			switch(col) {
 				case 'Citizens':  
-					let data = [{
-						id: 0,
-						val: 'Нет',
-						order_by:''
-					}];
-				
-					for (i of this.cach[col].items)	
-						data.push({
-							id: i.id,
-							val: i.name,
-							order_by:i.name+i.id
+					let groups = {};
+					for (let i of this.cach[col].items)	{						
+						if (!(i['Statuses.status'] in groups))
+							groups[i['Statuses.status']] = [];
+						
+						groups[i['Statuses.status']].push({
+							id:    i.id,
+							val:   i.name,
+							order: i.name+i.id,
 						});
+					}
+					for (let i in groups)
+						groups[i] = groups[i].sort(asc);
+									
+					this.books['Citizens.boss'] = {
+						type: 'group',
+						data: groups,
+						empty: {id: 0, val:'Нет'}
+					}
 					
-					this.books['Citizens.boss'] = data.sort(asc);
-				
 					let load_book_statuses = () => {
 						let data = [];
 						for (i of this.cach['Statuses'].items)	
 							data.push({
-								id: i.id,
-								val: i.status,
-								order_by: i.salary
+								id:    i.id,
+								val:   i.status,
+								order: i.salary,
 							});
-						this.books['Statuses.id_status'] = data.sort(desc);
+						this.books['Statuses.id_status'] = {
+							type: 'list',
+							data: data.sort(desc),
+						}
 					};
 				
 					if ('Statuses' in this.cach) 
