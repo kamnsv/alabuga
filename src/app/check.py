@@ -139,7 +139,7 @@ def citizen_data(data, row=None):
     # проверка типов boss
     boss = str(data.get('boss'))
     if not boss.isdigit() and boss is not None: return 'Не корректный тип данных "boss"'
-    
+    boss = int(boss)
             
     #проверка на age
     age = str(data.get('age'))
