@@ -11,7 +11,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     MAIL_SERVER = os.getenv('MAIL_SERVER')
-    MAIL_PORT  = int(os.getenv('MAIL_PORT'))
+    MAIL_PORT  = int(os.getenv('MAIL_PORT') or 465)
     MAIL_USE_TLS = True if 'True' == os.getenv('MAIL_USE_TLS') else False
     MAIL_USE_SSL = True if 'True' == os.getenv('MAIL_USE_SSL') else False
     MAIL_DEBUG  = True if 'True' == os.getenv('MAIL_DEBUG') else False

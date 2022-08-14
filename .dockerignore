@@ -1,0 +1,7 @@
+.git*
+/migrations
+*.bat
+*.md
+Dockerfile
+docker-compose.yml
+docker.env
