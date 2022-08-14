@@ -13,6 +13,7 @@
 - [Миграции](#миграции)
 - [Фронтенд](#фронтенд)
 - [Запуск](#запуск)
+- [Docker](#docker)
 
 
 ## Зависимости
@@ -31,6 +32,12 @@ Flask-SQLAlchemy==2.5.1
 
 ```
 psycopg2==2.9.3
+```
+
+* Если SQLite3:
+
+```
+pysqlite3
 ```
 
 ### Установка через `pip`:
@@ -87,3 +94,11 @@ flask seed run
 ```
 flask run
 ```		
+
+## Docker
+
+```
+docker-compose up
+```
+
+http://localhost:5000/
